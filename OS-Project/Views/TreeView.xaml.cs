@@ -221,7 +221,13 @@ namespace OS_Project.Views
 
                 //Update StartingAttribute
                 int AttributeLength = (int)BitConverter.ToInt32(buffer, (int)StartingAttribute + 0x04);
-                StartingAttribute += AttributeLength;
+                if (AttributeLength >= 1024)
+                {
+                    AttributeLength = (int)BitConverter.ToInt16(buffer, (int)StartingAttribute + 0x04);
+                    StartingAttribute += AttributeLength;
+                }
+                else
+                    StartingAttribute += AttributeLength;
 
             }
 
@@ -289,11 +295,17 @@ namespace OS_Project.Views
                     int NumOfEntry = calNumbOfEntries(buffer, StartingAttribute);
                     while (count < NumOfEntry)
                     {
+                        ParentID = 0;
+                        isReadOnly = false;
+                        isHidden = false;
+                        isSystem = false;
+                        FileName = "$";
+                        SizeOfFile = -1;
+                        Type = "";
                         EntryID = calcuEntryID(buffer);
                         StartingAttribute = (int)calStartingAttribute(buffer);
                         if (!isError(buffer))
                         {
-
 
                             if (isDelete(buffer))
                             {
@@ -309,12 +321,12 @@ namespace OS_Project.Views
                                 else
                                     Type = "File";
 
-                                if (!isEmptyEntry(buffer) && buffer[StartingAttribute] != 0x90)
+                                if (!isEmptyEntry(buffer))
                                 {
 
                                     //StartingAttribute = (int)calStartingAttribute(buffer);
                                     EntryID = calcuEntryID(buffer);
-                                    while (StartingAttribute < 1024 && CheckEND(buffer, StartingAttribute) != -1)
+                                    while (CheckEND(buffer, StartingAttribute) != -1)
                                     {
                                         if (buffer[StartingAttribute] == STANDARD_INFORMATION)
                                         {
@@ -332,14 +344,17 @@ namespace OS_Project.Views
                                         {
                                             Data_Reader(buffer, ref StartingAttribute, ref SizeOfFile, ref Type);
                                         }
-                                        else if (buffer[StartingAttribute] == BITMAP)
-                                        {
-                                            BitMap_Reader(buffer, ref StartingAttribute);
-                                        }
+
                                         else
                                         {
                                             int AttributeLength = (int)BitConverter.ToInt32(buffer, (int)StartingAttribute + 0x04);
-                                            StartingAttribute += AttributeLength;
+                                            if (AttributeLength >= 1024)
+                                            {
+                                                AttributeLength = (int)BitConverter.ToInt16(buffer, (int)StartingAttribute + 0x04);
+                                                StartingAttribute += AttributeLength;
+                                            }
+                                            else
+                                                StartingAttribute += AttributeLength;
                                         }
                                     }
 
@@ -585,7 +600,6 @@ namespace OS_Project.Views
 
                     Driver newDriver = new Driver()
                     {
-                        //fullname = drive.Name + drive.VolumeLabel,
                         fullname = "Partition " + index.ToString(),
                         name = drive.Name,
                         type = format != "NTFS" ? "FAT32" : format,
@@ -777,7 +791,7 @@ namespace OS_Project.Views
                 FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
                 FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
-                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isFile ? "◻️" : "✅"; ;
                 #endregion
 
                 e.Handled = true;
@@ -819,8 +833,7 @@ namespace OS_Project.Views
                 FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
                 FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
-                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
-
+                FDirectory.Text = node.info.isFile ? "◻️" : "✅"; ;
                 #endregion
 
                 e.Handled = true;
@@ -882,6 +895,7 @@ namespace OS_Project.Views
                     fs.Read(data, 0, data.Length);
                     fs.Close();
                 }
+                
 
                 for (int index = 2; index * 32 < data.Length; index++)
                 {
@@ -959,11 +973,11 @@ namespace OS_Project.Views
 
                                     node.children.Last<Node>().info.isFile = false;
 
-                                    ulong startingCluster = (ulong)BitConverter.ToInt16(data, index * 32 + 26);
+                                    long startingCluster = BitConverter.ToInt16(data, index * 32 + 26);
 
                                     Node new_node = new Node();
 
-                                    getFATFileFolderNames((int)startingCluster, clusters, ref new_node, fat);
+                                    getFATFileFolderNames(startingCluster, clusters, ref new_node, fat);
                                     foreach (Node child in new_node.children)
                                     {
                                         node.children.Last<Node>().children.Add(child);
@@ -979,7 +993,7 @@ namespace OS_Project.Views
                 }
 
                 starting_cluster = clusters[(int)starting_cluster];
-            } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8);
+            } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8 );
 
 
 
@@ -1033,7 +1047,7 @@ namespace OS_Project.Views
                 FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
                 FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
-                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isFile ? "◻️" : "✅"; ;
                 #endregion
 
                 e.Handled = true;
@@ -1128,19 +1142,6 @@ namespace OS_Project.Views
                 item.Items.Clear();
                 #endregion
 
-
-                #region Get Sub_dir/Data of this TreeviewItem
-                //byte[] sub_dir = new byte[512];
-
-                //using (FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read))
-                //{
-                //    fs.Seek((long)(info.sub_dir_start), SeekOrigin.Begin); //
-                //    fs.Read(sub_dir, 0, sub_dir.Length);
-                //    fs.Close();
-                //}
-                #endregion
-
-                //getFATFileFolderNames(sub_dir, info.RDET_start, info.fullpath, info.sectorPerCluster, item);
                 displayFATTree(node, item, node.info.fullpath);
                 
             }
