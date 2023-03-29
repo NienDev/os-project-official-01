@@ -977,8 +977,8 @@ namespace OS_Project.Views
                                 {
 
                                     node.children.Last<Node>().info.isFile = false;
-
-                                    long startingCluster = BitConverter.ToInt16(data, index * 32 + 26);
+                                    long highCluster = BitConverter.ToInt16(data, index * 32 + 0x14) << 16;
+                                    long startingCluster = highCluster + BitConverter.ToInt16(data, index * 32 + 26);
 
                                     Node new_node = new Node();
 
