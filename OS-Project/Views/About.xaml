@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="OS_Project.Views.About"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OS_Project.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="White">
+        <StackPanel Margin="12 12 0 0">
+            <TextBlock FontSize="16" Text="This Project is an application using the knowledge about FAT and NTFS file systems."/>
+            <TextBlock FontSize="16" FontWeight="Bold" Margin="0 8 0 0" FontFamily="poppins" Text="📝 Functions:"/>
+            <StackPanel Margin="16 4 0 0">
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Display Tree structure folder of any relative partition in USB"/>
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Display full path of a file/folder by hovering on icon"/>
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Display folder/file names"/>
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Expanse or collapse subfolder"/>
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Double click to get infomation about folder or file with related file system"/>
+                <TextBlock FontSize="16" FontFamily="poppins" Text="Display the format of each partition(FAT32 or NTFS)"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
