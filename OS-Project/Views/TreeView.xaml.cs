@@ -891,6 +891,11 @@ namespace OS_Project.Views
                 using (FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read))
                 {
                     startingClusterPosition = (starting_cluster - 2) * (long)fat.SectorsPerCluster * (long)fat.BytesPerSector + (long)fat.FatSize * 2 + (long)fat.ReservedSector * (long)fat.BytesPerSector + (long)fat.startingPosition;
+                    if (startingClusterPosition <= 0)
+                    {
+                        fs.Close();
+                        return;
+                    }
                     fs.Seek(startingClusterPosition, SeekOrigin.Begin); //
                     fs.Read(data, 0, data.Length);
                     fs.Close();
@@ -993,7 +998,7 @@ namespace OS_Project.Views
                 }
 
                 starting_cluster = clusters[(int)starting_cluster];
-            } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8 );
+            } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8 && starting_cluster != 0xffffff7);
 
 
 

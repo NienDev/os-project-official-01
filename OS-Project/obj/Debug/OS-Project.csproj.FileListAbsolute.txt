@@ -154,3 +154,7 @@ C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-mas
 C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\obj\Debug\OS-Project.csproj.CopyComplete
 C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\obj\Debug\OS-Project.exe
 C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\obj\Debug\OS-Project.pdb
+C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\bin\Debug\OS-Project.exe.manifest
+C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\bin\Debug\OS-Project.application
+C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\obj\Debug\OS-Project.exe.manifest
+C:\Users\Nien\Downloads\OS-Official-Project-00-master\OS-Official-Project-00-master\OS-Project\obj\Debug\OS-Project.application
