@@ -648,13 +648,14 @@ namespace OS_Project.Views
             return result;
         }
 
-        public List<long> read_FAT(FAT fat)
+        public Dictionary<long, long> read_FAT(FAT fat)
         {
-            List<long> clusters = new List<long>();
+            Dictionary<long, long> clusters = new Dictionary<long, long>();
 
+            long index = 0;
             for (long i = 0; i < fat.FAT_table.Length; i += 4)
             {
-                clusters.Add(BitConverter.ToInt32(fat.FAT_table, (int)i));
+                clusters[index++] = BitConverter.ToInt32(fat.FAT_table, (int)i);
             }
 
             return clusters;
@@ -691,7 +692,7 @@ namespace OS_Project.Views
                 //getFATFileFolderNames(fat.RDET, fat.starting_RDET, fat.driveName, (int)fat.SectorsPerCluster, null);
                 Node root = new Node();
 
-                List<long> clusters = read_FAT(fat);
+                Dictionary<long, long> clusters = read_FAT(fat);
 
                 getFATFileFolderNames((long)fat.StartedCluster, clusters, ref root, fat);
 
@@ -876,7 +877,7 @@ namespace OS_Project.Views
             return path.Substring(lastIndex + 1);
         }
 
-        public void getFATFileFolderNames(long starting_cluster, List<long> clusters, ref Node node, FAT fat)
+        public void getFATFileFolderNames(long starting_cluster, Dictionary<long, long> clusters, ref Node node, FAT fat)
         {
 
           
@@ -997,7 +998,7 @@ namespace OS_Project.Views
                     }
                 }
 
-                starting_cluster = clusters[(int)starting_cluster];
+                starting_cluster = clusters[starting_cluster];
             } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8 && starting_cluster != 0xffffff7);
 
 
