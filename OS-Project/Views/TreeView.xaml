@@ -147,38 +147,13 @@
 
         <Border Grid.Column="2">
             <StackPanel x:Name="DetailInfoContainer" Margin="12">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                    <TextBlock Margin="0 0 4 0" Text="Name:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                    <TextBlock x:Name="FName" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                    <TextBlock Margin="0 0 0 0" Text="Attributes:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="Archive:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FArchive" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
+                <Border BorderThickness="0 0 0 2" BorderBrush="#D7E5FA">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4">
+                        <TextBlock Margin="0 0 4 0" Text="Name:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
+                        <TextBlock x:Name="FName" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
                     </StackPanel>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="Directory:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FDirectory" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                    </StackPanel>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="VolLabel:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FVolLabel" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                    </StackPanel>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="System:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FSystem" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                    </StackPanel>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="Hidden:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FHidden" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                    </StackPanel>
-                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
-                        <TextBlock Text="ReadOnly:" FontSize="14" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FReadOnly" Text="" Margin="4 2 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                </Border>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 12 0 0">
                     <TextBlock Margin="0 0 4 0" Text="Date Created:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
                     <TextBlock x:Name="FDate" Text="" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
                 </StackPanel>
@@ -190,10 +165,40 @@
                     <TextBlock Margin="0 0 4 0" Text="Time Modified:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
                     <TextBlock  x:Name="FTimeModified" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="100" TextWrapping="Wrap" Foreground="#061A49"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                    <TextBlock Margin="0 0 4 0" Text="Size:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                    <TextBlock x:Name="FSize" Text="" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
-                </StackPanel> 
+                <Border BorderThickness="0 0 0 2" BorderBrush="#D7E5FA" Margin="0 0 0 12">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 0 12">
+                        <TextBlock Margin="0 0 4 0" Text="Size:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
+                        <TextBlock x:Name="FSize" Text="" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
+                    </StackPanel>
+                </Border>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                    <TextBlock Margin="0 0 0 0" Text="Attributes:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FArchive" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="Archive" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FDirectory" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="Directory" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                    
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FSystem" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="System" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FHidden" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="Hidden" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FReadOnly" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="ReadOnly" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                    <StackPanel Margin="12 0 0 0" Orientation="Horizontal" VerticalAlignment="Center" >
+                        <TextBlock x:Name="FVolLabel" Text="" Margin="4 2 8 0" FontSize="12" FontFamily="Poppins" Width="20" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock Text="VolLabel" FontSize="14" FontFamily="Poppins" FontWeight="Regular" Foreground="#061A49"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

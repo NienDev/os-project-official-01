@@ -314,7 +314,7 @@ namespace OS_Project.Views
 
                                     //StartingAttribute = (int)calStartingAttribute(buffer);
                                     EntryID = calcuEntryID(buffer);
-                                    while (CheckEND(buffer, StartingAttribute) != -1)
+                                    while (StartingAttribute < 1024 && CheckEND(buffer, StartingAttribute) != -1)
                                     {
                                         if (buffer[StartingAttribute] == STANDARD_INFORMATION)
                                         {
@@ -769,15 +769,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FDate.Text = node.info.date.Remove(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
-                FTime.Text =  node.info.date.Substring(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isSystem;
-                FReadOnly.Text = node.info.isReadOnly;
+                FTime.Text = node.info.date.Substring(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
-                FArchive.Text = node.info.isFile ? "True" : "False";
-                FDirectory.Text = node.info.isFile ? "False" : "True";
+                FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
                 #endregion
 
                 e.Handled = true;
@@ -811,15 +811,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FDate.Text = node.info.date.Remove(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
                 FTime.Text = node.info.date.Substring(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isSystem;
-                FReadOnly.Text = node.info.isReadOnly;
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
-                FArchive.Text = node.info.isFile ? "True" : "False";
-                FDirectory.Text = node.info.isFile ? "False" : "True";
+                FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
 
                 #endregion
 
@@ -997,15 +997,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FTime.Text = node.info.time;
                 FDate.Text = node.info.date;
-                FArchive.Text = node.info.isArchive;
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isHidden;
-                FVolLabel.Text = node.info.isVolLabel;
-                FDirectory.Text = node.info.isDirectory;
-                FReadOnly.Text = node.info.isReadOnly;
+                FArchive.Text = node.info.isArchive == "True" ? "✅" : "◻️";
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻️";
+                FVolLabel.Text = node.info.isVolLabel == "True" ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isDirectory == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
 
                 #endregion
@@ -1025,15 +1025,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FDate.Text = node.info.date.Remove(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
                 FTime.Text = node.info.date.Substring(node.info.date.IndexOf(" "), node.info.date.Length - node.info.date.IndexOf(" "));
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isSystem;
-                FReadOnly.Text = node.info.isReadOnly;
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
-                FArchive.Text = node.info.isFile ? "True" : "False";
-                FDirectory.Text = node.info.isFile ? "False" : "True";
+                FArchive.Text = node.info.isFile ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isFile ? "✅" : "◻️"; ;
                 #endregion
 
                 e.Handled = true;
@@ -1070,15 +1070,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FTime.Text = node.info.time;
                 FDate.Text = node.info.date;
-                FArchive.Text = node.info.isArchive;
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isSystem;
-                FVolLabel.Text = node.info.isVolLabel;
-                FDirectory.Text = node.info.isDirectory;
-                FReadOnly.Text = node.info.isReadOnly;
+                FArchive.Text = node.info.isArchive == "True" ? "✅" : "◻️";
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻️";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻️";
+                FVolLabel.Text = node.info.isVolLabel == "True" ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isDirectory == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
 
                 #endregion
@@ -1107,15 +1107,15 @@ namespace OS_Project.Views
                 #region Display detail info
 
                 FName.Text = GetFileFolderName(node.info.fullpath);
-                FSize.Text = getSize(node).ToString();
+                FSize.Text = sizeUnit(getSize(node)) + "(" + getSize(node) + " bytes)";
                 FTime.Text = node.info.time;
                 FDate.Text = node.info.date;
-                FArchive.Text = node.info.isArchive;
-                FHidden.Text = node.info.isHidden;
-                FSystem.Text = node.info.isSystem;
-                FVolLabel.Text = node.info.isVolLabel;
-                FDirectory.Text = node.info.isDirectory;
-                FReadOnly.Text = node.info.isReadOnly;
+                FArchive.Text = node.info.isArchive == "True" ? "✅" : "◻️";
+                FHidden.Text = node.info.isHidden == "True" ? "✅" : "◻️";
+                FSystem.Text = node.info.isSystem == "True" ? "✅" : "◻";
+                FVolLabel.Text = node.info.isVolLabel == "True" ? "✅" : "◻️"; ;
+                FDirectory.Text = node.info.isDirectory == "True" ? "✅" : "◻️";
+                FReadOnly.Text = node.info.isReadOnly == "True" ? "✅" : "◻️";
                 FTimeModified.Text = node.info.timeModified;
 
                 #endregion
@@ -1347,5 +1347,27 @@ namespace OS_Project.Views
             }
         }
 
+        static public string sizeUnit(double size)
+        {
+            string unit = " ";
+            if (size > 1000)
+            {
+                size /= 1024;
+                unit = " K";
+            }
+            if (size > 1000)
+            {
+                size /= 1024;
+                unit = " M";
+            }
+            if (size > 1000)
+            {
+                size /= 1024;
+                unit = " G";
+            }
+
+            return size.ToString("F2") + unit + "B";
+
+        }
     }
 }

@@ -146,5 +146,33 @@
     <Resource Include="images\nien.png" />
     <Resource Include="images\phi.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\bin.png" />
+    <Resource Include="images\c++.png" />
+    <Resource Include="images\cs.png" />
+    <Resource Include="images\css.png" />
+    <Resource Include="images\csv.png" />
+    <Resource Include="images\dat.png" />
+    <Resource Include="images\docx.png" />
+    <Resource Include="images\exe.png" />
+    <Resource Include="images\gif.png" />
+    <Resource Include="images\html.png" />
+    <Resource Include="images\jpg.png" />
+    <Resource Include="images\js.png" />
+    <Resource Include="images\pdf.png" />
+    <Resource Include="images\php.png" />
+    <Resource Include="images\png.png" />
+    <Resource Include="images\ppt.png" />
+    <Resource Include="images\py.png" />
+    <Resource Include="images\rar.png" />
+    <Resource Include="images\svg.png" />
+    <Resource Include="images\txt.png" />
+    <Resource Include="images\xls.png" />
+    <Resource Include="images\xml.png" />
+    <Resource Include="images\zip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\sql.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
