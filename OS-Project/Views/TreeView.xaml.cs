@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -439,6 +440,7 @@ namespace OS_Project.Views
             public ulong starting_RDET;
             public byte[] FAT_table;
             public ulong startingPosition;
+            public long max_size;
 
             public FAT(ulong startingPartitionPosition, string _driveName)
             {
@@ -482,8 +484,6 @@ namespace OS_Project.Views
 
                     fs.Close();
                 }
-
-            
             }
         }
 
@@ -648,14 +648,13 @@ namespace OS_Project.Views
             return result;
         }
 
-        public Dictionary<long, long> read_FAT(FAT fat)
+        public List<long> read_FAT(FAT fat)
         {
-            Dictionary<long, long> clusters = new Dictionary<long, long>();
+            List<long> clusters = new List<long>();
 
-            long index = 0;
             for (long i = 0; i < fat.FAT_table.Length; i += 4)
             {
-                clusters[index++] = BitConverter.ToInt32(fat.FAT_table, (int)i);
+                clusters.Add(BitConverter.ToInt32(fat.FAT_table, (int)i));
             }
 
             return clusters;
@@ -668,7 +667,7 @@ namespace OS_Project.Views
             Driver info = (Driver)clickedButton.Tag;
            
             FolderView.Items.Clear();
-
+            
 
             if (info.type == "NTFS")
             {
@@ -689,12 +688,15 @@ namespace OS_Project.Views
             {
           
                 FAT fat = new FAT(info.starting_position, info.name);
-                //getFATFileFolderNames(fat.RDET, fat.starting_RDET, fat.driveName, (int)fat.SectorsPerCluster, null);
+              
                 Node root = new Node();
 
-                Dictionary<long, long> clusters = read_FAT(fat);
+                List<long> clusters = read_FAT(fat);
 
-                getFATFileFolderNames((long)fat.StartedCluster, clusters, ref root, fat);
+                FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read);
+
+                
+                getFATFileFolderNames((int)fat.StartedCluster,ref clusters, ref fat, ref fs, ref root);
 
                 displayFATTree(root, null, info.name);
             }
@@ -877,134 +879,123 @@ namespace OS_Project.Views
             return path.Substring(lastIndex + 1);
         }
 
-        public void getFATFileFolderNames(long starting_cluster, Dictionary<long, long> clusters, ref Node node, FAT fat)
+        static public byte[] getSDET(long starting_cluster, ref List<long> clusters, ref FileStream fs, ref FAT fat)
         {
-
-          
-            //Iterate through each entry of the directory
-            string name = "";
-            do
+            long numberOfClusters = 0;
+            long temp_starting_cluster = starting_cluster;
+            while (starting_cluster != 0x0FFFFFFF && starting_cluster != 0x0FFFFFF7)
             {
-                byte[] data = new byte[fat.SectorsPerCluster * fat.BytesPerSector];
+                numberOfClusters++;
+                starting_cluster = clusters[(int)starting_cluster];
+            }
 
-                long startingClusterPosition;
+            byte[] sdet = new byte[numberOfClusters * (long)fat.SectorsPerCluster * (long)fat.BytesPerSector];
+            starting_cluster = temp_starting_cluster;
 
-                using (FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read))
+            for (long i = 0; i < numberOfClusters; i++)
+            {
+                long startingClusterPosition = ((int)starting_cluster - 2) * (long)fat.SectorsPerCluster * (long)fat.BytesPerSector + (long)fat.FatSize * 2 + (long)fat.ReservedSector * (long)fat.BytesPerSector + (long)fat.startingPosition;
+                fs.Seek(startingClusterPosition, SeekOrigin.Begin);
+                fs.Read(sdet, (int)fat.BytesPerSector * (int)fat.SectorsPerCluster * (int)i, (int)fat.BytesPerSector * (int)fat.SectorsPerCluster);
+                starting_cluster = clusters[(int)starting_cluster];
+            }
+            return sdet;
+        }
+
+        static public void getFATFileFolderNames(long starting_cluster, ref List<long> clusters, ref FAT fat, ref FileStream fs, ref Node node)
+        {
+            if (starting_cluster >= clusters.Count) return;
+            byte[] sdet = getSDET(starting_cluster, ref clusters, ref fs, ref fat);
+
+            long index = 0;
+            string name = "";
+
+            while (true)
+            {
+                if (sdet[index * 32] == 0)
                 {
-                    startingClusterPosition = (starting_cluster - 2) * (long)fat.SectorsPerCluster * (long)fat.BytesPerSector + (long)fat.FatSize * 2 + (long)fat.ReservedSector * (long)fat.BytesPerSector + (long)fat.startingPosition;
-                    if (startingClusterPosition <= 0)
-                    {
-                        fs.Close();
-                        return;
-                    }
-                    fs.Seek(startingClusterPosition, SeekOrigin.Begin); //
-                    fs.Read(data, 0, data.Length);
-                    fs.Close();
+                    break;
                 }
-                
-
-                for (int index = 2; index * 32 < data.Length; index++)
+                if (sdet[index * 32 + 11] == 0xE5)
                 {
-
-
-                    if (data[index * 32] != 0xE5 && data[index * 32] != 0) // if file/folder was NOT deleted 
-                    {
-                        if (data[index * 32 + 11] == 0x0F) // if this is long entry
-                        {
-                            name = Encoding.Unicode.GetString(data, index * 32 + 1, 10) + Encoding.Unicode.GetString(data, index * 32 + 14, 12) + Encoding.Unicode.GetString(data, index * 32 + 28, 4) + name;
-                        }
-                        else // this a short entry
-                        {
-
-                            if (name == "") // if there is no long entry, take the name from short entry -> vi tri 00(11 bytes)
-                            {
-                                if (isDirectory(data, index * 32) == "False")
-                                { // if entry is file
-                                  //name = Encoding.Unicode.GetString(data, index * 32, 8) + "." + Encoding.Unicode.GetString(data, index * 32 + 8, 3);
-                                    int i = 0;
-                                    while (i < 8)
-                                    {
-                                        if ((char)data[index * 32 + i] != ' ')
-                                        {
-                                            name += (char)data[index * 32 + i++]; //entry is folder
-                                        }
-                                        else break;
-                                    }
-                                    name += ".";
-                                    while (i < 11)
-                                    { 
-                                        if ((char)data[index * 32 + i] != ' ')
-                                        {
-                                            name += (char)data[index * 32 + i]; //entry is folder
-                                        }
-                                        i++;
-                                    }
-                                }
-                                else
-                                {
-                                    int i = 0;
-                                    while (data[index * 32 + i] != 0x20)
-                                        name += (char)data[index * 32 + i++]; //entry is folder
-                                    //name = Encoding.as.GetString(data, index * 32, 8);
-                                }
-                            }
-                          
-                            NodeInfo info = new NodeInfo()
-                            {
-                                fullpath = name,
-                                RDET_start = fat.starting_RDET,
-                                sub_dir_start = 0,
-                                isFile = true,
-                                isExpanded = false,
-                                size = getSize(data, index * 32),
-                                date = getDate(data, index * 32),
-                                time = getTimeCreated(data, index * 32),
-                                timeModified = getTimeModified(data, index * 32),
-                                isArchive = isArchive(data, index * 32),
-                                isDirectory = isDirectory(data, index * 32),
-                                isHidden = isHidden(data, index * 32),
-                                isReadOnly = isReadOnly(data, index * 32),
-                                isSystem = isSystem(data, index * 32),
-                                isVolLabel = isVolLabel(data, index * 32),
-                                sectorPerCluster = (int)fat.SectorsPerCluster
-                            };
-
-
-                            if (data[index * 32 + 11] != 0x16 && data[index * 32 + 11] != 0x08 && name != "." && name != "..") // ignore system file 
-                            {
-
-                                node.children.Add(new Node(info));
-                                if (isDirectory(data, index*32) == "True") //folder
-                                {
-
-                                    node.children.Last<Node>().info.isFile = false;
-                                    long highCluster = BitConverter.ToInt16(data, index * 32 + 0x14) << 16;
-                                    long startingCluster = highCluster + BitConverter.ToInt16(data, index * 32 + 26);
-
-                                    Node new_node = new Node();
-
-                                    getFATFileFolderNames(startingCluster, clusters, ref new_node, fat);
-                                    foreach (Node child in new_node.children)
-                                    {
-                                        node.children.Last<Node>().children.Add(child);
-                                    }
-
-                                }
-                            }
-
-                            name = "";
-
-                        }
-                    }
+                    index++;
+                    continue;
                 }
 
-                starting_cluster = clusters[starting_cluster];
-            } while (starting_cluster != 0xfffffff && starting_cluster != 0xffffff8 && starting_cluster != 0xffffff7);
+                if (sdet[index * 32 + 11] == 0x0F) // if this is long entry
+                {
+                    name = Encoding.Unicode.GetString(sdet, (int)index * 32 + 1, 10) + Encoding.Unicode.GetString(sdet, (int)index * 32 + 14, 12) + Encoding.Unicode.GetString(sdet, (int)index * 32 + 28, 4) + name;
+                }
+                else // this a short entry
+                {
+                    if (name == "") // if there is no long entry, take the name from short entry -> vi tri 00(11 bytes)
+                    {
+                        if (isDirectory(sdet, (int)index * 32) == "False")
+                        { // if entry is file
+                            name = Encoding.ASCII.GetString(sdet, (int)index * 32, 8).TrimEnd(' ') + "." + Encoding.ASCII.GetString(sdet, (int)index * 32 + 8, 3);
+                        }
+                        else
+                        {
+                            name = Encoding.ASCII.GetString(sdet, (int)index * 32, 8).TrimEnd(' ');
+                        }
+                    }
 
 
+
+
+                    if (sdet[index * 32 + 11] != 0x16 && sdet[index * 32 + 11] != 0x08 && name != "." && name != "..") // ignore system file 
+                    {
+
+                        NodeInfo info = new NodeInfo()
+                        {
+                            fullpath = name,
+                            RDET_start = fat.starting_RDET,
+                            sub_dir_start = 0,
+                            isFile = true,
+                            isExpanded = false,
+                            size = getSize(sdet, index * 32),
+                            date = getDate(sdet, index * 32),
+                            time = getTimeCreated(sdet, index * 32),
+                            timeModified = getTimeModified(sdet, index * 32),
+                            isArchive = isArchive(sdet, index * 32),
+                            isDirectory = isDirectory(sdet, index * 32),
+                            isHidden = isHidden(sdet, index * 32),
+                            isReadOnly = isReadOnly(sdet, index * 32),
+                            isSystem = isSystem(sdet, index * 32),
+                            isVolLabel = isVolLabel(sdet, index * 32),
+                            sectorPerCluster = (int)fat.SectorsPerCluster
+                        };
+
+                        node.children.Add(new Node(info));
+                        if (isDirectory(sdet, index * 32) == "True") //folder
+                        {
+
+                            node.children.Last<Node>().info.isFile = false;
+                            long highCluster = BitConverter.ToInt16(sdet, (int)index * 32 + 0x14);
+                            long cluster = BitConverter.ToInt16(sdet, (int)index * 32 + 26);
+                            long startingCluster = highCluster << 16 | cluster;
+
+
+                            Node new_node = new Node();
+                            getFATFileFolderNames(startingCluster, ref clusters, ref fat, ref fs, ref new_node);
+                            foreach (Node child in new_node.children)
+                            {
+                                node.children.Last<Node>().children.Add(child);
+                            }
+                        }
+
+                        Console.WriteLine(name.ToString());
+                    }
+
+                    name = "";
+                }
+                index++;
+            }
 
 
         }
+
+     
 
         private void TreeItem_DoubleClicked(object sender, RoutedEventArgs e)
         {
@@ -1156,17 +1147,17 @@ namespace OS_Project.Views
         }
 
         #region get File/Folder Detail Infomation
-        static ulong getSize(byte[] data, int start)
+        static ulong getSize(byte[] data, long start)
         {
             ulong size = 0;
-            size = (ulong)BitConverter.ToInt32(data, start + 0x1C);
+            size = (ulong)BitConverter.ToInt32(data, (int)start + 0x1C);
             return size;
         }
 
-        static string getDate(byte[] data, int start)
+        static string getDate(byte[] data, long start)
         {
             string date = "";
-            int dec = BitConverter.ToInt16(data, start + 0x10);
+            int dec = BitConverter.ToInt16(data, (int)start + 0x10);
             int d = dec & 0x1F;
             dec = dec >> 5;
             int m = dec & 0xF;
@@ -1176,7 +1167,7 @@ namespace OS_Project.Views
             return date;
         }
 
-        static string getTimeCreated(byte[] data, int start)
+        static string getTimeCreated(byte[] data, long start)
         {
             string time = "";
             byte[] getTime = new byte[4];
@@ -1196,10 +1187,10 @@ namespace OS_Project.Views
             return time;
         }
 
-        static string getTimeModified(byte[] data, int start)
+        static string getTimeModified(byte[] data, long start)
         {
             string time = "";
-            int dec = BitConverter.ToInt16(data, start);
+            int dec = BitConverter.ToInt16(data, (int)start);
             int s = dec & 0x1F;
             s *= 2;
             dec = dec >> 5;
@@ -1212,42 +1203,42 @@ namespace OS_Project.Views
         }
 
         #region Attribute
-        static string isArchive(byte[] data, int start)
+        static string isArchive(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x10;
             int check = dec >> 4;
             return check == 1 ? "False" : "True";
         }
-        static string isDirectory(byte[] data, int start)
+        static string isDirectory(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x10;
             int check = dec >> 4;
             return check == 1 ? "True" : "False";
         }
-        static string isVolLabel(byte[] data, int start)
+        static string isVolLabel(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x8;
             int check = dec >> 3;
             return check == 1 ? "True" : "False";
         }
-        static string isSystem(byte[] data, int start)
+        static string isSystem(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x4;
             int check = dec >> 2;
             return check == 1 ? "True" : "False";
         }
-        static string isHidden(byte[] data, int start)
+        static string isHidden(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x2;
             int check = dec >> 1;
             return check == 1 ? "True" : "False";
         }
-        static string isReadOnly(byte[] data, int start)
+        static string isReadOnly(byte[] data, long start)
         {
             int dec = (int)data[start + 0x0B];
             dec = dec & 0x1;
