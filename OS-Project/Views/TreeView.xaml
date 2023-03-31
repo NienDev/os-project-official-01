@@ -168,7 +168,7 @@
                 <Border BorderThickness="0 0 0 2" BorderBrush="#D7E5FA" Margin="0 0 0 12">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 0 12">
                         <TextBlock Margin="0 0 4 0" Text="Size:" FontSize="16" FontFamily="Poppins" FontWeight="SemiBold" Foreground="#061A49"/>
-                        <TextBlock x:Name="FSize" Text="" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="150" TextWrapping="Wrap" Foreground="#061A49"/>
+                        <TextBlock x:Name="FSize" Text="" Margin="0 3.5 0 0" FontSize="12" FontFamily="Poppins" Width="185" TextWrapping="Wrap" Foreground="#061A49"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">

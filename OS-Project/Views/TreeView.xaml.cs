@@ -956,7 +956,7 @@ namespace OS_Project.Views
                             size = getSize(sdet, index * 32),
                             date = getDate(sdet, index * 32),
                             time = getTimeCreated(sdet, index * 32),
-                            timeModified = getTimeModified(sdet, index * 32),
+                            timeModified = getTimeModified(sdet, index * 32) + " - " + getDateModified(sdet, index * 32),
                             isArchive = isArchive(sdet, index * 32),
                             isDirectory = isDirectory(sdet, index * 32),
                             isHidden = isHidden(sdet, index * 32),
@@ -1190,7 +1190,7 @@ namespace OS_Project.Views
         static string getTimeModified(byte[] data, long start)
         {
             string time = "";
-            int dec = BitConverter.ToInt16(data, (int)start);
+            int dec = unchecked((ushort)BitConverter.ToInt16(data, (int)start + 0x16));
             int s = dec & 0x1F;
             s *= 2;
             dec = dec >> 5;
@@ -1366,6 +1366,19 @@ namespace OS_Project.Views
 
             return size.ToString("F2") + unit + "B";
 
+        }
+
+        static string getDateModified(byte[] data, long start)
+        {
+            string date = "";
+            int dec = BitConverter.ToInt16(data, (int)start + 0x18);
+            int d = dec & 0x1F;
+            dec = dec >> 5;
+            int m = dec & 0xF;
+            dec = dec >> 4;
+            int y = dec + 1980;
+            date = d.ToString() + "/" + m.ToString() + "/" + y.ToString();
+            return date;
         }
     }
 }
