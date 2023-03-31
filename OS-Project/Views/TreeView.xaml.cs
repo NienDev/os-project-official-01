@@ -912,11 +912,11 @@ namespace OS_Project.Views
 
             while (true)
             {
-                if (sdet[index * 32] == 0)
+                if (index * 32 >= sdet.Length  || sdet[index * 32] == 0)
                 {
                     break;
                 }
-                if (sdet[index * 32 + 11] == 0xE5)
+                if (sdet[index * 32] == 0xE5)
                 {
                     index++;
                     continue;
@@ -972,7 +972,7 @@ namespace OS_Project.Views
 
                             node.children.Last<Node>().info.isFile = false;
                             long highCluster = BitConverter.ToInt16(sdet, (int)index * 32 + 0x14);
-                            long cluster = BitConverter.ToInt16(sdet, (int)index * 32 + 26);
+                            long cluster = unchecked((ushort)BitConverter.ToInt16(sdet, ((int)index * 32) + 26));
                             long startingCluster = highCluster << 16 | cluster;
 
 
